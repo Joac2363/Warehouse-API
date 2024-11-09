@@ -20,8 +20,9 @@ namespace Warehouse_API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpGet("all/")]
         [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         public IActionResult GetAllProducts() 
         {
             ICollection<ProductDTO> products = _mapper.Map<ICollection<ProductDTO>>(_productRepository.GetAllProducts());
@@ -45,13 +46,13 @@ namespace Warehouse_API.Controllers
                 return NotFound(ModelState);
             }
 
-            ProductDTO products = _mapper.Map<ProductDTO>(_productRepository.GetProduct(productId));
+            ProductDTO product = _mapper.Map<ProductDTO>(_productRepository.GetProduct(productId));
 
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            return Ok(products);
+            return Ok(product);
         }
 
         [HttpPost]
@@ -93,7 +94,7 @@ namespace Warehouse_API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var productMap = _mapper.Map<Product>(productCreate);
+            Product productMap = _mapper.Map<Product>(productCreate);
 
             if (!_productRepository.CreateProduct(productMap))
             {
@@ -113,7 +114,7 @@ namespace Warehouse_API.Controllers
             if (!_productRepository.ProductExists(productId))
             {
                 ModelState.AddModelError("Id", "A product with that id doesnt exist");
-                return NotFound();
+                return NotFound(ModelState);
             }
 
             // Here you would also check if any other data is tied to this category and handle it
@@ -152,7 +153,7 @@ namespace Warehouse_API.Controllers
             if (!_productRepository.ProductExists(productId))
             {
                 ModelState.AddModelError("Id", "A product with that id doenst exist");
-                return NotFound();
+                return NotFound(ModelState);
             }
 
 
