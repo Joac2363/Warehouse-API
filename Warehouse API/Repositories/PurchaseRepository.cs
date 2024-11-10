@@ -31,6 +31,7 @@ namespace Warehouse_API.Repositories
                 .Where(o => o.Purchase.PurchaseId == purchaseId)
                 .Sum(o => o.Product.Price * o.Amount);
         }
+       
         public bool PurchaseExists(int purchaseId)
         {
             return _context.Purchases.Any(p => p.PurchaseId == purchaseId);
@@ -53,6 +54,5 @@ namespace Warehouse_API.Repositories
             int saved = _context.SaveChanges();
             return saved > 0 ? true : false;
         }
-
     }
 }

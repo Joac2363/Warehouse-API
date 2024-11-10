@@ -24,7 +24,7 @@ namespace Warehouse_API.Controllers
         }
 
         [HttpGet("all/")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(200, Type = typeof(ICollection<PurchaseDTO>))]
         [ProducesResponseType(400)]
         public IActionResult GetAllPurchases()
         {
@@ -44,6 +44,7 @@ namespace Warehouse_API.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetPurchase(int purchaseId)
         {
+            // Validate PurchaseId
             if (!_purchaseRepository.PurchaseExists(purchaseId))
             {
                 ModelState.AddModelError("Id", "A purchase with that id doesnt exist");
@@ -54,6 +55,7 @@ namespace Warehouse_API.Controllers
             {
                 return BadRequest(ModelState);
             }
+            
             PurchaseDTO purchase = _mapper.Map<PurchaseDTO>(_purchaseRepository.GetPurchase(purchaseId));
 
             return Ok(purchase);
@@ -67,11 +69,13 @@ namespace Warehouse_API.Controllers
         [ProducesResponseType(500)]
         public IActionResult CreatePruchase([FromBody] PurchaseDTO purchaseCreate)
         {
+            //Validate PurchaseDTO
             if (purchaseCreate == null)
             {
                 return BadRequest(ModelState);
             }
 
+            // Validate PurchaseId
             if (purchaseCreate.PurchaseId != 0)
             {
                 ModelState.AddModelError("Id", "The Id field should not be provided.");
@@ -83,8 +87,8 @@ namespace Warehouse_API.Controllers
                 return BadRequest(ModelState);
             }
 
+            //Create new Purchase
             Purchase purchaseMap = _mapper.Map<Purchase>(purchaseCreate);
-
             if (!_purchaseRepository.CreatePurchase(purchaseMap))
             {
                 ModelState.AddModelError("", "Something went wrong while saving");
@@ -100,23 +104,26 @@ namespace Warehouse_API.Controllers
         [ProducesResponseType(400)]
         public IActionResult DeletePurchase(int purchaseId)
         {
+            // Validate PurchaseId
             if (!_purchaseRepository.PurchaseExists(purchaseId))
             {
                 ModelState.AddModelError("Id", "A purchase with that id doesnt exist");
                 return NotFound(ModelState);
             }
 
+            // Validate Purchase has no orders
             if (_orderRepository.GetAllOrders().Any(o => o.PurchaseId == purchaseId))
             {
                 ModelState.AddModelError("", "Cannot delete purchase that still has orders");
                 return BadRequest(ModelState);
             }
 
-                if (!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
+            // Delete Purchase
             Purchase purchase = _purchaseRepository.GetPurchase(purchaseId);
             if (!_purchaseRepository.DeletePurchase(purchase))
             {
@@ -128,15 +135,17 @@ namespace Warehouse_API.Controllers
         }
 
         [HttpGet("{purchaseId}/value")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(200, Type = typeof(int))]
         [ProducesResponseType(400)]
         public IActionResult GetValueOfPurchase(int purchaseId)
         {
+            // Validate PurchaseId
             if (!_purchaseRepository.PurchaseExists(purchaseId))
             {
                 ModelState.AddModelError("Id", "A purchase with that id doesnt exist");
                 return NotFound(ModelState);
             }
+            
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

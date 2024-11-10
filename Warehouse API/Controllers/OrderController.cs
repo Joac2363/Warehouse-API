@@ -28,7 +28,7 @@ namespace Warehouse_API.Controllers
         }
 
         [HttpGet("all/")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(200, Type = typeof(ICollection<Order>))]
         [ProducesResponseType(400)]
         public IActionResult GetAllOrders()
         {
@@ -48,6 +48,7 @@ namespace Warehouse_API.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetOrder(int orderId)
         {
+            // Validate OrderId
             if (!_orderRepository.OrderExists(orderId))
             {
                 ModelState.AddModelError("Id", "An order with that id doesnt exist");
@@ -72,22 +73,27 @@ namespace Warehouse_API.Controllers
         [ProducesResponseType(500)]
         public IActionResult CreateOrder(int purchaseId, [FromBody] OrderDTO orderCreate)
         {
+            // Validate OrderPTO
             if (orderCreate == null)
             {
                 return BadRequest(ModelState);
             }
 
+            // Validate OrderId
             if (orderCreate.OrderId != 0)
             {
                 ModelState.AddModelError("Id", "The Id field should not be provided.");
                 return BadRequest(ModelState);
             }
 
+            // Validate PurchseId
             if (!_purchaseRepository.PurchaseExists(purchaseId))
             {
                 ModelState.AddModelError("Id", "A purchase with that id doesnt exist");
                 return NotFound(ModelState);
             }
+
+            // Validate ProductId
             if (!_productRepository.ProductExists(orderCreate.ProductId))
             {
                 ModelState.AddModelError("Id", "A product with that id doesnt exist");
@@ -99,10 +105,8 @@ namespace Warehouse_API.Controllers
                 return BadRequest(ModelState);
             }
 
+            // Create Order
             Order orderMap = _mapper.Map<Order>(orderCreate);
-            //orderMap.Product = _productRepository.GetProduct(productId);
-            //orderMap.Purchase = _purchaseRepository.GetPurchase(purchaseId);
-
             if (!_orderRepository.CreateOrder(orderMap))
             {
                 ModelState.AddModelError("", "Something went wrong while saving");
@@ -118,6 +122,7 @@ namespace Warehouse_API.Controllers
         [ProducesResponseType(400)]
         public IActionResult DeleteOrder(int orderId)
         {
+            // Validate OrderId
             if (!_orderRepository.OrderExists(orderId))
             {
                 ModelState.AddModelError("Id", "An order with that id doesnt exist");
@@ -129,6 +134,7 @@ namespace Warehouse_API.Controllers
                 return BadRequest(ModelState);
             }
 
+            // Delete Order
             Order order = _orderRepository.GetOrder(orderId);
             if (!_orderRepository.DeleteOrder(order))
             {

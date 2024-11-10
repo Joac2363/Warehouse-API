@@ -13,11 +13,13 @@ namespace Warehouse_API.Repositories
         {
             _context = context;
         }
+        
         public bool CreateWarehouse(Warehouse warehouse)
         { 
             _context.Add(warehouse);
             return Save();
         }
+        
         public bool WarehouseExists(int warehouseId)
         {
             return _context.Warehouses.Any(w => w.WarehouseId == warehouseId);
@@ -28,14 +30,17 @@ namespace Warehouse_API.Repositories
             _context.Remove(warehouse);
             return Save();
         }
+        
         public bool DeleteWarehouse(int warehouseId)
         {
-            return DeleteWarehouse(_context.Warehouses.Where(w => w.WarehouseId == warehouseId).FirstOrDefault());
+            return DeleteWarehouse(_context.Warehouses.FirstOrDefault(w => w.WarehouseId == warehouseId));
         }
 
         public ICollection<Product> GetAllProducts(int warehouseId)
         {
-            return _context.Stock.Where(w => w.WarehouseId==warehouseId).Select(p => p.Product).ToList();
+            return _context.Stock.Where(w => w.WarehouseId==warehouseId)
+                                  .Select(p => p.Product)
+                                  .ToList();
         }
 
         public ICollection<Warehouse> GetAllWarehouses()
@@ -45,26 +50,31 @@ namespace Warehouse_API.Repositories
 
         public int GetTotalStock(int warehouseId)
         {
-            return _context.Stock.Where(w => w.WarehouseId == warehouseId).Select(p => p.Amount).Sum();
+            return _context.Stock.Where(w => w.WarehouseId == warehouseId)
+                                  .Select(p => p.Amount)
+                                  .Sum();
         }
 
         public int GetTotalValueOfStock(int warehouseId)
         {
             return _context.Stock
-                .Include(s => s.Product)  // Ensure Product is loaded with each Stock
+                .Include(s => s.Product) 
                 .Where(s => s.WarehouseId == warehouseId)
                 .Sum(s => s.Product.Price * s.Amount);
         }
 
         public Warehouse GetWarehouse(int warehouseId)
         {
-            return _context.Warehouses.Where(w => w.WarehouseId == warehouseId).FirstOrDefault();
+            return _context.Warehouses.FirstOrDefault(w => w.WarehouseId == warehouseId);
         }
 
         public int GetWarehouseCapacity(int warehouseId)
         {
-            return _context.Warehouses.Where(w => w.WarehouseId == warehouseId).Select(w => w.Capacity).FirstOrDefault();
+            return _context.Warehouses.Where(w => w.WarehouseId == warehouseId)
+                                       .Select(w => w.Capacity)
+                                       .FirstOrDefault();
         }
+        
         public bool UpdateWarehouse(Warehouse warehouse)
         {
             _context.Update(warehouse);

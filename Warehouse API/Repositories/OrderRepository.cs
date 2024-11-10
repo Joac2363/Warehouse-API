@@ -27,6 +27,7 @@ namespace Warehouse_API.Repositories
         {
             return _context.Orders.Any(o => o.OrderId == orderId);
         }
+        
         public bool CreateOrder(Order order)
         {
             _context.Add(order);
@@ -44,6 +45,5 @@ namespace Warehouse_API.Repositories
             int saved = _context.SaveChanges();
             return saved > 0 ? true : false;
         }
-
     }
 }

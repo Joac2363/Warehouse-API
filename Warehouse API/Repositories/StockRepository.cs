@@ -15,15 +15,17 @@ namespace Warehouse_API.Repositories
             _context = context;
             _mapper = mapper;
         }
-
+        
         public Stock GetStock(int productId, int warehouseId)
         {
-            return _context.Stock.Where(p => p.ProductId == productId).Where(w => w.WarehouseId == warehouseId).FirstOrDefault();
+            return _context.Stock.FirstOrDefault(s => s.ProductId == productId && s.WarehouseId == warehouseId);
         }
+        
         public ICollection<Stock> GetAllStock()
         {
             return _context.Stock.ToList();
         }
+        
         public ICollection<Stock> GetAllStockAtWarehouse(int warehouseId)
         {
             return _context.Stock.Where(w => w.WarehouseId == warehouseId).ToList();
@@ -63,29 +65,30 @@ namespace Warehouse_API.Repositories
                 recieverStock.Amount = amount;
                 recieverStock.MinAcceptableStock = 0;
                 _context.Add(recieverStock);
-            } else
+            } 
+            else
             {
                 recieverStock = GetStock(stock.ProductId, toWarehouse.WarehouseId);
                 recieverStock.Amount += amount;
                 _context.Update(recieverStock);
             }
 
-            // Update or remove the giving stock
+            // Update or remove the non-revieving stock
             if (stock.Amount == 0)
             {
                 _context.Remove(stock);
-            } else
+            } 
+            else
             {
                 _context.Update(stock);
             }
-            return Save();
             
+            return Save();    
         }
-
 
         public bool StockExists(int productId, int warehouseId)
         {
-            return _context.Stock.Where(p => p.ProductId == productId).Where(w => w.WarehouseId == warehouseId).Any();
+            return _context.Stock.Any(s => s.ProductId == productId && s.WarehouseId == warehouseId);
         }
 
         public bool StockExists(Stock stock)

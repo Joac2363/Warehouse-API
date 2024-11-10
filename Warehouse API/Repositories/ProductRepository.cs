@@ -14,19 +14,24 @@ namespace Warehouse_API.Repositories
         {
             _context = context;
         }
-
+       
         public bool CreateProduct(Product product)
         {
+            // Genereate new SKU if needed
             if (product.SKU == 0)
             {
+                // Generate helper object
                 SKUHelper skuhelp = new SKUHelper(product.Price);
+                
+                // While loop, to ensure uniqueness
                 int sku = skuhelp.New();
-                while (_context.Products.Where(p => p.SKU == sku).Any())
+                while (_context.Products.Any(p => p.SKU == sku))
                 {
                     sku = skuhelp.New();
                 } 
                 product.SKU = sku;
             }
+           
             _context.Add(product);
 
             return Save();
@@ -37,9 +42,10 @@ namespace Warehouse_API.Repositories
             _context.Remove(product);
             return Save();
         }
+        
         public bool DeleteProduct(int productId)
         {
-            return DeleteProduct(_context.Products.Where(p => p.ProductId == productId).FirstOrDefault());
+            return DeleteProduct(_context.Products.FirstOrDefault(p => p.ProductId == productId));
         }
 
         public ICollection<Product> GetAllProducts()
@@ -49,7 +55,7 @@ namespace Warehouse_API.Repositories
 
         public Product GetProduct(int productId)
         {
-            return _context.Products.Where(p => p.ProductId == productId).FirstOrDefault();
+            return _context.Products.FirstOrDefault(p => p.ProductId == productId);
         }
 
         public int GetProductPrice(int productId)
@@ -62,17 +68,16 @@ namespace Warehouse_API.Repositories
             return _context.Products.Any(p => p.ProductId == productId);
         }
 
-
         public bool UpdateProduct(Product product)
         {
             _context.Update(product);
             return Save();
         }
+        
         public bool Save()
         {
             int saved = _context.SaveChanges();
             return saved > 0 ? true : false;
         }
-
     }
 }
