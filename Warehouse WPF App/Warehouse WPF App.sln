@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Warehouse API", "Warehouse API\Warehouse API.csproj", "{816A9D10-4967-4E6D-A752-9122F07E3048}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Warehouse WPF App", "Warehouse WPF App.csproj", "{D65ED321-CDD8-44A3-AD97-B31BF453B1DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{816A9D10-4967-4E6D-A752-9122F07E3048}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{816A9D10-4967-4E6D-A752-9122F07E3048}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{816A9D10-4967-4E6D-A752-9122F07E3048}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{816A9D10-4967-4E6D-A752-9122F07E3048}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D65ED321-CDD8-44A3-AD97-B31BF453B1DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D65ED321-CDD8-44A3-AD97-B31BF453B1DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D65ED321-CDD8-44A3-AD97-B31BF453B1DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D65ED321-CDD8-44A3-AD97-B31BF453B1DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {FFFACCE1-0662-414C-8347-C2558C3224F5}
+		SolutionGuid = {36EA21FE-970D-4367-B51A-86B5093F1221}
 	EndGlobalSection
 EndGlobal
