@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Warehouse_API.Data;
 
@@ -11,9 +12,11 @@ using Warehouse_API.Data;
 namespace Warehouse_API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20241110124008_AddedPurchaseAndOrder")]
+    partial class AddedPurchaseAndOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -79,7 +82,7 @@ namespace Warehouse_API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PurchaseId"));
 
-                    b.Property<DateTime?>("FulfilmentDate")
+                    b.Property<DateTime>("FulfilmentDate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("OrderDate")

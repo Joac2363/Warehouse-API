@@ -13,6 +13,8 @@ namespace Warehouse_API.Data
         public DbSet<Warehouse> Warehouses { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Stock> Stock { get; set; }
+        public DbSet<Purchase> Purchases { get; set; }
+        public DbSet<Order> Orders { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder) // Place for customization of tables
         {
             // Sets up the M -> M relaitionship

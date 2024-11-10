@@ -8,9 +8,11 @@ namespace Warehouse_API.MappingProfiles
     {
         public MappingProfiles()
         {
-            CreateMap<Product, ProductDTO>();            CreateMap<ProductDTO, Product>();
-            CreateMap<Warehouse, WarehouseDTO>();        CreateMap<WarehouseDTO, Warehouse>();
-            CreateMap<Stock, StockDTO>();        CreateMap<StockDTO, Stock>();
+            CreateMap<Product, ProductDTO>();           CreateMap<ProductDTO, Product>();
+            CreateMap<Warehouse, WarehouseDTO>();       CreateMap<WarehouseDTO, Warehouse>();
+            CreateMap<Stock, StockDTO>();               CreateMap<StockDTO, Stock>();
+            CreateMap<Purchase, PurchaseDTO>();         CreateMap<PurchaseDTO, Purchase>();
+            CreateMap<Order, OrderDTO>();               CreateMap<OrderDTO, Order>();
 
         }
     }

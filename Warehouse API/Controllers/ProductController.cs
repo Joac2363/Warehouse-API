@@ -13,12 +13,14 @@ namespace Warehouse_API.Controllers
     {
         private readonly IProductRepository _productRepository;
         private readonly IStockRepository _stockRepository;
+        private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
 
-        public ProductController(IProductRepository productRepository, IStockRepository stockRepository, IMapper mapper)
+        public ProductController(IProductRepository productRepository, IStockRepository stockRepository, IOrderRepository orderRepository, IMapper mapper)
         {
             _productRepository = productRepository;
             _stockRepository = stockRepository;
+            _orderRepository = orderRepository;
             _mapper = mapper;
         }
 
@@ -119,11 +121,18 @@ namespace Warehouse_API.Controllers
                 return NotFound(ModelState);
             }
 
+            if (_orderRepository.GetAllOrders().Any(s => s.ProductId == productId))
+            {
+                ModelState.AddModelError("", "Cannot delete product that still has orders");
+                return BadRequest(ModelState);
+            }
+
             if (_stockRepository.GetAllStock().Any(s => s.ProductId == productId))
             {
                 ModelState.AddModelError("", "Cannot delete product that is still in stock");
                 return BadRequest(ModelState);
             }
+
 
                 if (!ModelState.IsValid)
             {

@@ -58,7 +58,7 @@ namespace Warehouse_API.Controllers
         }
 
         [HttpGet("{warehouseId}")]
-        [ProducesResponseType(200, Type = typeof(Product))]
+        [ProducesResponseType(200, Type = typeof(Warehouse))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public IActionResult GetWarehouse(int warehouseId)

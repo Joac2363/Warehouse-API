@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Warehouse_API.DTO;
 using Warehouse_API.Helpers;
 using Warehouse_API.Interfaces;
@@ -30,7 +32,7 @@ namespace Warehouse_API.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetAllStock()
         {
-            ICollection<Stock> stocks = _stockRepository.GetAllStock();
+            ICollection<StockDTO> stocks = _mapper.Map<ICollection<StockDTO>>(_stockRepository.GetAllStock());
 
             if (!ModelState.IsValid)
             {
@@ -44,7 +46,7 @@ namespace Warehouse_API.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetAllStockAtWarehouse(int warehouseId)
         {
-            ICollection<Stock> stocks = _stockRepository.GetAllStockAtWarehouse(warehouseId);
+            ICollection<StockDTO> stocks = _mapper.Map<ICollection<StockDTO>>(_stockRepository.GetAllStockAtWarehouse(warehouseId));
 
             if (!ModelState.IsValid)
             {
@@ -65,43 +67,45 @@ namespace Warehouse_API.Controllers
                 return NotFound(ModelState);
             }
 
-            Stock stock = _stockRepository.GetStock(productId, warehouseId);
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            StockDTO stock = _mapper.Map<StockDTO>(_stockRepository.GetStock(productId, warehouseId));
+
             return Ok(stock);
         }
 
 
-        [HttpPost("{warehouseId}/{productId}")]
+        [HttpPost()]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(409)]
         [ProducesResponseType(422)]
         [ProducesResponseType(500)]
-        public IActionResult CreateStock(int warehouseId, int productId, [FromQuery] int minAcceptableStock, [FromQuery] int amount)
+        public IActionResult CreateStock([FromBody] StockDTO stock)
         {
-            if (_stockRepository.StockExists(productId, warehouseId))
+            if (_stockRepository.StockExists(stock.ProductId, stock.WarehouseId))
             {
                 ModelState.AddModelError("Id", "A stock with thoose ids already exists");
                 return Conflict(ModelState);
             }
 
-            if (!_warehouseRepository.WarehouseExists(warehouseId))
+            if (!_warehouseRepository.WarehouseExists(stock.WarehouseId))
             {
                 ModelState.AddModelError("Id", "A warehouse with that id doesnt exists");
                 return NotFound(ModelState);
             }
             
-            if (!_productRepository.ProductExists(productId))
+            if (!_productRepository.ProductExists(stock.ProductId))
             {
+                ModelState.AddModelError("Id", "A product with that id doesnt exists");
                 return NotFound(ModelState);
             }
 
             // Check if warehouse has enough capacity
-            if (_warehouseRepository.GetTotalStock(warehouseId) + amount > _warehouseRepository.GetWarehouseCapacity(warehouseId))
+            if (_warehouseRepository.GetTotalStock(stock.WarehouseId) + stock.Amount > _warehouseRepository.GetWarehouseCapacity(stock.WarehouseId))
             {
                 ModelState.AddModelError("Amount", "The warehouse doesnt have enough capacity");
                 return BadRequest(ModelState);
@@ -112,17 +116,19 @@ namespace Warehouse_API.Controllers
                 return BadRequest(ModelState);
             }
 
-            Stock stock = new Stock()
-            {
-                ProductId = productId,
-                Product = _productRepository.GetProduct(productId),
-                WarehouseId = warehouseId,
-                Warehouse = _warehouseRepository.GetWarehouse(warehouseId),
-                Amount = amount,
-                MinAcceptableStock = minAcceptableStock
-            };
+            //Stock stocka = new Stock()
+            //{
+            //    ProductId = productId,
+            //    Product = _productRepository.GetProduct(productId),
+            //    WarehouseId = warehouseId,
+            //    Warehouse = _warehouseRepository.GetWarehouse(warehouseId),
+            //    Amount = amount,
+            //    MinAcceptableStock = minAcceptableStock
+            //};
 
-            if (!_stockRepository.CreateStock(stock))
+            Stock stockMap = _mapper.Map<Stock>(stock);
+
+            if (!_stockRepository.CreateStock(stockMap))
             {
                 ModelState.AddModelError("", "Something went wrong while saving");
                 return StatusCode(500, ModelState);
