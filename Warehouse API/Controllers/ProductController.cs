@@ -12,11 +12,13 @@ namespace Warehouse_API.Controllers
     public class ProductController : Controller
     {
         private readonly IProductRepository _productRepository;
+        private readonly IStockRepository _stockRepository;
         private readonly IMapper _mapper;
 
-        public ProductController(IProductRepository productRepository, IMapper mapper)
+        public ProductController(IProductRepository productRepository, IStockRepository stockRepository, IMapper mapper)
         {
             _productRepository = productRepository;
+            _stockRepository = stockRepository;
             _mapper = mapper;
         }
 
@@ -117,9 +119,13 @@ namespace Warehouse_API.Controllers
                 return NotFound(ModelState);
             }
 
-            // Here you would also check if any other data is tied to this category and handle it
+            if (_stockRepository.GetAllStock().Any(s => s.ProductId == productId))
+            {
+                ModelState.AddModelError("", "Cannot delete product that is still in stock");
+                return BadRequest(ModelState);
+            }
 
-            if (!ModelState.IsValid)
+                if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }

@@ -1,4 +1,5 @@
-﻿using Warehouse_API.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using Warehouse_API.Data;
 using Warehouse_API.Interfaces;
 using Warehouse_API.Models;
 
@@ -49,12 +50,10 @@ namespace Warehouse_API.Repositories
 
         public int GetTotalValueOfStock(int warehouseId)
         {
-            int value = 0;
-            foreach(Stock stock in _context.Stock.Where(w => w.WarehouseId == warehouseId))
-            {
-                value += stock.Product.Price * stock.Amount;
-            }
-            return value;
+            return _context.Stock
+                .Include(s => s.Product)  // Ensure Product is loaded with each Stock
+                .Where(s => s.WarehouseId == warehouseId)
+                .Sum(s => s.Product.Price * s.Amount);
         }
 
         public Warehouse GetWarehouse(int warehouseId)

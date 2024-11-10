@@ -13,11 +13,13 @@ namespace Warehouse_API.Controllers
     public class WarehouseController : Controller
     {
         private readonly IWarehouseRepository _warehouseRepository;
+        private readonly IStockRepository _stockRepository;
         private readonly IMapper _mapper;
 
-        public WarehouseController(IWarehouseRepository warehouseRepository, IMapper mapper)
+        public WarehouseController(IWarehouseRepository warehouseRepository, IStockRepository stockRepository, IMapper mapper)
         {
             _warehouseRepository = warehouseRepository;
+            _stockRepository = stockRepository;
             _mapper = mapper;
         }
 
@@ -50,9 +52,9 @@ namespace Warehouse_API.Controllers
                 return BadRequest(ModelState);
             }
 
-            ICollection<WarehouseDTO> warehouses = _mapper.Map<ICollection<WarehouseDTO>>(_warehouseRepository.GetAllProducts(warehouseId));
+            ICollection<ProductDTO> products = _mapper.Map<ICollection<ProductDTO>>(_warehouseRepository.GetAllProducts(warehouseId));
 
-            return Ok(warehouses);
+            return Ok(products);
         }
 
         [HttpGet("{warehouseId}")]
@@ -174,7 +176,7 @@ namespace Warehouse_API.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
-        public IActionResult DeleteProduct(int warehouseId)
+        public IActionResult DeleteWarehouse(int warehouseId)
         {
             if (!_warehouseRepository.WarehouseExists(warehouseId))
             {
@@ -182,7 +184,11 @@ namespace Warehouse_API.Controllers
                 return NotFound();
             }
 
-            // Here you would also check if any other data is tied to this category and handle it
+            if (_stockRepository.GetAllStock().Any(s => s.WarehouseId == warehouseId))
+            {
+                ModelState.AddModelError("", "Cannot delete warehouse that still has stock");
+                return BadRequest(ModelState);
+            }
 
             if (!ModelState.IsValid)
             {
