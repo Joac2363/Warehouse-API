@@ -1,4 +1,8 @@
-﻿using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -10,20 +14,16 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Warehouse_WPF_App.ViewModel;
 
-namespace Warehouse_WPF_App
+namespace Warehouse_WPF_App.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for ProductsView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class ProductsView : UserControl
     {
-        public MainWindow()
+        public ProductsView()
         {
             InitializeComponent();
-            MainVM vm = new MainVM();
-            DataContext = vm;
         }
-
-
     }
 }

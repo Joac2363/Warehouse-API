@@ -3,10 +3,27 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
         xmlns:local="clr-namespace:Warehouse_WPF_App"
+        xmlns:UserControls="clr-namespace:Warehouse_WPF_App.UserControls" xmlns:model="clr-namespace:FLOW.Model" d:DataContext="{d:DesignInstance Type=model:ModelBase}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="1080" Width="1920"
+        WindowState="Maximized">
     <Grid>
-
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="10*"/>
+        </Grid.ColumnDefinitions>
+        
+        <!--Sidebar-->
+        <StackPanel Grid.Column="0" Background="DarkGray" Margin="0">
+            <UserControls:SidebarItem Text="Products" />
+            <UserControls:SidebarItem Text="Warehouses" />
+            <UserControls:SidebarItem Text="Orders" />
+        </StackPanel>
+        
+        <!--Main-->
+        <ContentControl Grid.Column="1" Content="{Binding CurrentViewModel}"></ContentControl>
+        <!--<TextBlock Grid.Column="1" Text="{Binding test, FallbackValue=nej}" FontSize="100"></TextBlock>-->
     </Grid>
 </Window>
